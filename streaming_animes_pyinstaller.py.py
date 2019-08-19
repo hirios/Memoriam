@@ -8,26 +8,13 @@ import sys
 import os
 import re
 
-options = Options()
-options.headless = True
-
 
 def localizar_driver():
-    if os.path.isfile('chromedriver') or os.path.isfile('chromedriver.exe'):
-        if os.name == 'posix':
-            # Retorna o driver nos sistas operacionais posix(ubuntu, etc...)
-            return webdriver.Chrome(os.getcwd() + '/chromedriver', options=options)
-        elif os.name == 'nt':
-            # Retorna o driver no sistema operacional windows
-            return webdriver.Chrome(executable_path=os.getcwd() + '\chromedriver.exe', options=options)
-        else:
-            print('Sistema operacional, não reconhecido.')
-            print('Envie o resultado abaixo para os desenvolvedores em https://github.com/hirios/raspamb/')
-            print(os.name)
-            exit()
-    else:
-        print('Nao encontrei o driver na mesma pasta do arquivo\nTentarei pela path do sistema')
-        return webdriver.Chrome(options=options)
+	options = Options()
+	options.headless = True
+	if getattr(sys, 'frozen', False) :
+		chromedriver_path = os.path.join(sys._MEIPASS, 'chromedriver')
+		return webdriver.Chrome(chromedriver_path, options=options)
 
 
 def links_zippyshare():
