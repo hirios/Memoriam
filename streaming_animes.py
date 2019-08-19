@@ -142,6 +142,11 @@ def retornar_busca():
         zip = zip_link[0].get('href')
         picotado = str(link).split('/')
         comand = f"https://{picotado[2]}{zip}"
-        start = subprocess.check_call(["vlc", comand])
+        start = subprocess.Popen(["vlc", comand])
+        try:
+            clear = subprocess.Popen(["clear"])
+        except:
+            clear = subprocess.Popen(["cls"])
+
 
 retornar_busca()
