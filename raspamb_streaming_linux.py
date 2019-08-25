@@ -4,17 +4,28 @@ from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.chrome.options import Options
 import subprocess
-import sys
 import os
 import re
 
+options = Options()
+options.headless = True
 
 def localizar_driver():
-	options = Options()
-	options.headless = True
-	if getattr(sys, 'frozen', False) :
-		chromedriver_path = os.path.join(sys._MEIPASS, 'chromedriver')
-		return webdriver.Chrome(chromedriver_path, options=options)
+    if os.path.isfile('chromedriver') or os.path.isfile('chromedriver.exe'):
+        if os.name == 'posix':
+            # Retorna o driver nos sistas operacionais posix(ubuntu, etc...)
+            return webdriver.Chrome(os.getcwd() + '/chromedriver', options=options)
+        elif os.name == 'nt':
+            # Retorna o driver no sistema operacional windows
+            return webdriver.Chrome(executable_path=os.getcwd() + '\chromedriver.exe', chrome_options=options)
+        else:
+            print('Sistema operacional, não reconhecido.')
+            print('Envie o resultado abaixo para os desenvolvedores em https://github.com/hirios/raspamb/')
+            print(os.name)
+            exit()
+    else:
+        print('Nao encontrei o driver na mesma pasta do arquivo\nTentarei pela path do sistema')
+        return webdriver.Chrome()
 
 
 def links_zippyshare():
@@ -34,6 +45,7 @@ bs = BeautifulSoup(html.text, 'html.parser')
 data = bs.find(class_="list")
 dat = data.find_all("a")
 tv = data.find_all("a", href=True)
+# epi = data.find_all("td", {'class':  'epi'})
 
 lista = []
 for c in range(0, len(dat)):
@@ -44,13 +56,13 @@ for c in range(0, len(dat)):
 def retornar_busca():
     global driver
     global list_animes
-
+    
     quantidade_anime = 0
     list_animes = []
     tv_anbient = []
     while quantidade_anime == 0:
         anime = input('Nome do anime: ').lower().strip()
-
+        print()
         for c in range(0, len(lista)):
             names = lista[c].find(anime)
             if names != (-1):
@@ -70,6 +82,7 @@ def retornar_busca():
     while True:
         try:
             numero = int(input('Digite um número (-1 para voltar): '))
+            print()
             if numero == -1:
                 retornar_busca()
             if (numero - 1) < len(list_animes):
@@ -86,11 +99,10 @@ def retornar_busca():
             print('Tem outra coisa dando bosta aq')
             print(e)
 
-    print()
     print('Capturando links dos episódios...')
     print('Recomenda-se que o chromedriver esteja na mesma pasta que este script')
     print()
-
+    
     try:
         driver = localizar_driver()
         driver.get(link)
@@ -104,11 +116,11 @@ def retornar_busca():
     for i in range(0, len(lista_links)):
         print(f'[{i + 1}] {lista_links[i]}')
 
-    print()
     while True:
         # Le o numero do episódio que ira baixar
         while True:
             try:
+                print()
                 numero_episodio = int(input('Número do episódio (-1 para voltar): '))
                 if numero_episodio == -1:
                     retornar_busca()
@@ -121,7 +133,7 @@ def retornar_busca():
                 print('''!!!! Atenção !!!! Erro no número''')
 
         print()
-        print('Carregando episódio...')
+        print('Carregando anime...')
         print()
         driver.get(link)
         sopa = BeautifulSoup(driver.page_source, 'html.parser')
@@ -129,11 +141,6 @@ def retornar_busca():
         zip = zip_link[0].get('href')
         picotado = str(link).split('/')
         comand = f"https://{picotado[2]}{zip}"
-        start = subprocess.Popen(["vlc", comand])
-        try:
-            clear = subprocess.Popen(["clear"])
-        except:
-            clear = subprocess.Popen(["cls"])
-
+        start = subprocess.check_call(["vlc", comand])
 
 retornar_busca()
