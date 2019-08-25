@@ -7,6 +7,7 @@ import os
 options = Options()
 options.headless = True
 
+
 def localizar_driver():
 	if getattr(sys, 'frozen', False) :
 		chromedriver_path = os.path.join(sys._MEIPASS, 'chromedriver')
@@ -17,3 +18,17 @@ def localizar_driver():
 # Para construir no windows: pyinstaller --onefile --add-binary "chromedriver.exe;." script.py
 
 # pyinstaller --onefile --add-data "node.msi;." script.py
+
+
+# Comando para iniciar um aplicativo no windows
+import sys
+import os
+
+
+def localizar_driver():
+	if getattr(sys, 'frozen', False) :
+		path = os.path.join(sys._MEIPASS, 'node.msi')
+		return path
+
+os.system(f'"{localizar_driver()}"')
+
