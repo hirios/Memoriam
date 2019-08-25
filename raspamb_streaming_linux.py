@@ -56,7 +56,7 @@ for c in range(0, len(dat)):
 def retornar_busca():
     global driver
     global list_animes
-    
+
     quantidade_anime = 0
     list_animes = []
     tv_anbient = []
@@ -102,7 +102,7 @@ def retornar_busca():
     print('Capturando links dos episódios...')
     print('Recomenda-se que o chromedriver esteja na mesma pasta que este script')
     print()
-    
+
     try:
         driver = localizar_driver()
         driver.get(link)
@@ -112,7 +112,7 @@ def retornar_busca():
         exit()
 
     lista_links = links_zippyshare()
-    # Imprime a lista de animes
+    # Imprime a lista de links
     for i in range(0, len(lista_links)):
         print(f'[{i + 1}] {lista_links[i]}')
 
@@ -141,6 +141,6 @@ def retornar_busca():
         zip = zip_link[0].get('href')
         picotado = str(link).split('/')
         comand = f"https://{picotado[2]}{zip}"
-        start = subprocess.check_call(["vlc", comand])
+        start = subprocess.check_call(["vlc", comand, "> /dev/null"])
 
 retornar_busca()
