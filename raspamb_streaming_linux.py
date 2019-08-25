@@ -17,7 +17,7 @@ def localizar_driver():
             return webdriver.Chrome(os.getcwd() + '/chromedriver', options=options)
         elif os.name == 'nt':
             # Retorna o driver no sistema operacional windows
-            return webdriver.Chrome(executable_path=os.getcwd() + '\chromedriver.exe', chrome_options=options)
+            return webdriver.Chrome(executable_path=os.getcwd() + '\chromedriver.exe', options=options)
         else:
             print('Sistema operacional, não reconhecido.')
             print('Envie o resultado abaixo para os desenvolvedores em https://github.com/hirios/raspamb/')
