@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import os
 import subprocess
 import socket
+import time
 
 busca = input('Nome do filme: ')
 busca = busca.split()
@@ -17,7 +18,7 @@ url = concatenando + busca[len(busca)-1]
 url_final = 'https://www.baixarfilmetorrent.net/?s='+url
 
 print()
-print(url_final)
+print("Carregando lista de filmes...")
 print()
 
 req = requests.get(url_final)
@@ -40,16 +41,22 @@ lin = links[select_number - 1]
 
 link = requests.get(lin)
 soup = BeautifulSoup(link.text, 'html.parser')
-
-html_qualidades = soup.find_all("td", {'class':  'td-mv-res'})
-html_magnetic = soup.find_all("td", {'class':  'td-mv-dow'})
+tabelas = soup.find_all("table")
 
 resolut = []
 magnetico = []
 
-for link_mag in range(0, len(html_magnetic)):
-    resolut.append(html_qualidades[link_mag].string)
-    magnetico.append(str(html_magnetic[link_mag]).split('"')[3])
+for tabela in range(0, len(tabelas)):
+    single_table = BeautifulSoup(str(tabelas[tabela]), 'html.parser')
+    strong = single_table.find("strong")
+    html_qualidades = single_table.find_all("td", {'class':  'td-mv-res'})
+    html_magnetic = single_table.find_all("td", {'class':  'td-mv-dow'})
+
+    for quali in range(0, len(html_qualidades)):
+        resolut.append(f"{html_qualidades[quali].string} {strong.string}")
+
+    for link_mag in range(len(html_magnetic)):
+        magnetico.append(str(html_magnetic[link_mag]).split('"')[3])
 
 for cont in range(0, len(magnetico)):
     print([cont + 1], resolut[cont])
@@ -64,5 +71,6 @@ print("Aguarde o carregamento... \nEnjoy!!")
 start = "peerflix", mag_final
 server = " ".join(start)
 ip = socket.gethostbyname(socket.gethostname())
-vlcstart = subprocess.Popen(["vlcc.lnk", f"http://{ip}:8888"], shell=True)
-subir_server = os.system(server)
+subir_server = subprocess.Popen(server, shell=True)
+time.sleep(3)
+vlc_start = subprocess.Popen(["vlcc.lnk", f"http://{ip}:8888"], shell=True)
