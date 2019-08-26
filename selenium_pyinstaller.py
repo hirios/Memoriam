@@ -32,3 +32,5 @@ def localizar_driver():
 
 os.system(f'"{localizar_driver()}"')
 
+subprocess.Popen([f"{path()}vlcc.lnk", comand], shell=True)
+os.system(f'"{localizar_driver()}vlcc.lnk"')
