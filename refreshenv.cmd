@@ -65,3 +65,6 @@ goto main
 
     echo | set /p dummy="Finished."
     echo .
+    
+title mycmd
+tasklist /v /fo csv | findstr /i "mycmd"
