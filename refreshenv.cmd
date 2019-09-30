@@ -68,3 +68,5 @@ goto main
     
 title mycmd
 tasklist /v /fo csv | findstr /i "mycmd"
+
+tasklist /FI "STATUS eq running" | more
